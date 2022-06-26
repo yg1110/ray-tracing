@@ -1,0 +1,23 @@
+{
+  "name": "ray-tracing",
+  "version": "1.0.0",
+  "description": "",
+  "main": "target.js",
+  "scripts": {
+    "build": "tsc target && node target.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yg1110/ray-tracing.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/yg1110/ray-tracing/issues"
+  },
+  "homepage": "https://github.com/yg1110/ray-tracing#readme",
+  "devDependencies": {
+    "@types/node": "^18.0.0"
+  }
+}
