@@ -5,31 +5,46 @@ var width = 400;
 var ratio = 16.0 / 9.0;
 var height = (width / ratio);
 // 랜더링 해주는 함수
-var present = function (width, height) {
-    var output = '';
-    for (var i = 1; i <= width * height; i++) {
-        var rgb = [255, 0, 0];
-        if (i === width * height)
-            output += rgb.join(' ');
-        else
-            output += rgb.join(' ') + '\n';
+var present = function (width, ratio) {
+    var output = [];
+    var aspect_ratio = ratio;
+    var image_width = width;
+    var image_height = image_width / aspect_ratio;
+    console.log(image_width, image_height);
+    for (var j = 0; j < image_height; j++) {
+        for (var i = 0; i < image_width; i++) {
+            var u = i / (image_width - 1);
+            var v = j / (image_height - 1);
+            output.push(parseInt(String(u * 255.999)));
+            output.push(parseInt(String(v * 255.999)));
+            output.push(parseInt(String(0.25 * 255.999)));
+        }
     }
     return output;
 };
 var ppm_header = function (width, height) {
     return "P3\n".concat(width, " ").concat(height, "\n255\n");
 };
-var header = ppm_header(width, height);
-var output = present(width, height);
-var filename = 'output.ppm';
-fs.writeFile(filename, header, 'utf8', function (error) {
-    if (error)
-        throw error;
-    console.log('write end');
-});
-fs.writeFile(filename, output, { flag: 'a+' }, function (err) {
-    if (err) {
-        console.error(err);
-        return;
+var writeRGB = function (output) {
+    var rgb = '';
+    var filename = 'output.ppm';
+    var header = ppm_header(width, height);
+    fs.writeFileSync(filename, header, 'utf-8');
+    for (var i = 1; i <= output.length; i++) {
+        if (i % 3 === 0) {
+            if (i === output.length) {
+                rgb += output[i - 1];
+            }
+            else {
+                rgb += output[i - 1] + '\n';
+            }
+            fs.appendFileSync(filename, rgb, 'utf-8');
+            rgb = '';
+        }
+        else {
+            rgb += output[i - 1] + ' ';
+        }
     }
-});
+};
+var output = present(width, ratio);
+writeRGB(output);
