@@ -37,78 +37,77 @@ class Vec3 {
         this.z = z;
     }
 
-    // length_squared = ():number => {
-    //     return (this.x * this.x) + (this.y * this.y) + (this.z * this.z)
-    // }
-    //
-    // length = ():number => {
-    //     return Math.sqrt(this.length_squared());
-    // }
-    //
-    // normalize = () => {
-    //
-    // }
-    //
-    // unit_vector = (v:Vec3):Vec3 => {
-    //     return v
-    // }
+    length_squared = ():number => {
+        return (this.x * this.x) + (this.y * this.y) + (this.z * this.z)
+    }
+
+    length = ():number => {
+        return Math.sqrt(this.length_squared());
+    }
+
+    normalize = () => {
+        this.setX(this.getX() / this.length())
+        this.setY(this.getY() / this.length())
+        this.setZ(this.getZ() / this.length());
+        return this
+    }
+
+    Mul = (rhs:number | Vec3):Vec3 => {
+        if(typeof rhs === 'number'){
+            this.setX(this.getX() * rhs)
+            this.setY(this.getY() * rhs)
+            this.setZ(this.getZ() * rhs)
+        }
+        else if(typeof rhs === 'object'){
+            this.setX(this.getX() * rhs.getX())
+            this.setY(this.getY() * rhs.getY())
+            this.setZ(this.getZ() * rhs.getZ())
+        }
+        else {}
+        return this
+    }
+
+    Div = (rhs:number | Vec3):Vec3 => {
+        if(typeof rhs === 'number'){
+            this.setX(this.getX() * 1.0 / rhs)
+            this.setY(this.getY() * 1.0 / rhs)
+            this.setZ(this.getZ() * 1.0 / rhs)
+        }
+        else if(typeof rhs === 'object'){
+            this.setX(this.getX() * 1.0 / rhs.getX())
+            this.setY(this.getY() * 1.0 / rhs.getY())
+            this.setZ(this.getZ() * 1.0 / rhs.getZ())
+        }
+        else {}
+        return this
+    }
+
+    Add = (rhs:number | Vec3):Vec3 => {
+        if(typeof rhs === 'number') {
+            this.setX(this.getX() + rhs)
+            this.setY(this.getY() + rhs)
+            this.setZ(this.getZ() + rhs)
+        }
+        else if(typeof rhs === 'object') {
+            this.setX(this.getX() + rhs.getX())
+            this.setY(this.getY() + rhs.getY())
+            this.setZ(this.getZ() + rhs.getZ())
+        }
+        else {}
+        return this
+    }
+
+    Index = (index:number):number | null => {
+        if(this.getVector().length <= index) return null;
+        else return this.getVector()[index];
+    }
 }
 
-const Neg = (v:Vec3):Vec3 => {
+const neg = (v:Vec3):Vec3 => {
     v.setX(-v.getX())
     v.setY(-v.getY())
     v.setZ(-v.getZ())
     return v
-}
-
-const Mul = (v:Vec3, rhs:number | Vec3):Vec3 => {
-    if(typeof rhs === 'number'){
-        v.setX(v.getX() * rhs)
-        v.setY(v.getY() * rhs)
-        v.setZ(v.getZ() * rhs)
-    }
-    else if(typeof rhs === 'object'){
-        v.setX(v.getX() * rhs.getX())
-        v.setY(v.getY() * rhs.getY())
-        v.setZ(v.getZ() * rhs.getZ())
-    }
-    else {}
-    return v
-}
-
-const Div = (v:Vec3, rhs:number | Vec3):Vec3 => {
-    if(typeof rhs === 'number'){
-        v.setX(v.getX() * 1.0 / rhs)
-        v.setY(v.getY() * 1.0 / rhs)
-        v.setZ(v.getZ() * 1.0 / rhs)
-    }
-    else if(typeof rhs === 'object'){
-        v.setX(v.getX() * 1.0 / rhs.getX())
-        v.setY(v.getY() * 1.0 / rhs.getY())
-        v.setZ(v.getZ() * 1.0 / rhs.getZ())
-    }
-    else {}
-    return v
-}
-
-const Add = (v:Vec3, rhs:number | Vec3):Vec3 => {
-    if(typeof rhs === 'number') {
-        v.setX(v.getX() + rhs)
-        v.setY(v.getY() + rhs)
-        v.setZ(v.getZ() + rhs)
-    }
-    else if(typeof rhs === 'object') {
-        v.setX(v.getX() + rhs.getX())
-        v.setY(v.getY() + rhs.getY())
-        v.setZ(v.getZ() + rhs.getZ())
-    }
-    else {}
-    return v
-}
-
-const Index = (v:Vec3, index:number):number | null => {
-    if(v.getVector().length <= index) return null;
-    else return v.getVector()[index];
 }
 
 const dot = (u:Vec3, v:Vec3):number => {
@@ -123,27 +122,25 @@ const cross = (u:Vec3, v:Vec3):Vec3 => {
     )
 }
 
-// const unit_vector = (v:Vec3) => {
-//     return v
-// }
-
 const main = () => {
-    const vector1 = new Vec3(1.0, 2.0, 3.0);
+    const vector1 = new Vec3(2.0, 2.0, 2.0);
     const vector2 = new Vec3(3.0, 2.0, 1.0);
-    // const negative = Neg(vector1);
-    // const multiple = Mul(vector1, 3);
-    // const division = Div(vector1, 3);
-    // const addition = Add(vector1, 3);
+    const unitVector = vector1.normalize()
+    // const multiple = vector1.Mul(3);
+    // const division = vector1.Div(3);
+    // const addition = vector1.Add(3);
     // const dotVector = dot(vector1, vector2)
+    // const negative = neg(vector1);
     // const dotCross = cross(vector1, vector2)
 
     // console.log(negative.getVector())
     // console.log(multiple.getVector())
     // console.log(division.getVector())
     // console.log(addition.getVector())
-    // console.log(Index(addition, 4))
+    // console.log(vector1.Index(2))
     // console.log(dotVector)
     // console.log(dotCross.getVector())
+    console.log(unitVector.getVector())
 }
 
 main();
