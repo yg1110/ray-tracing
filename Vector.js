@@ -1,5 +1,6 @@
 "use strict";
 exports.__esModule = true;
+exports.cross = exports.dot = exports.neg = void 0;
 var Vec3 = /** @class */ (function () {
     function Vec3(x, y, z) {
         var _this = this;
@@ -74,19 +75,22 @@ var Vec3 = /** @class */ (function () {
         this.unit_vector = function () {
             return _this.div(_this.length());
         };
-        this.neg = function (v) {
-            return new Vec3(-v.getX(), -v.getY(), -v.getZ());
-        };
-        this.dot = function (u, v) {
-            return u.getX() * v.getX() + u.getY() * v.getY() + u.getZ() * v.getZ();
-        };
-        this.cross = function (u, v) {
-            return new Vec3(u.getY() * v.getZ() - u.getZ() * v.getY(), u.getZ() * v.getX() - u.getX() * v.getZ(), u.getX() * v.getY() - u.getY() * v.getX());
-        };
         this.x = x;
         this.y = y;
         this.z = z;
     }
     return Vec3;
 }());
+var neg = function (v) {
+    return new Vec3(-v.getX(), -v.getY(), -v.getZ());
+};
+exports.neg = neg;
+var dot = function (u, v) {
+    return u.getX() * v.getX() + u.getY() * v.getY() + u.getZ() * v.getZ();
+};
+exports.dot = dot;
+var cross = function (u, v) {
+    return new Vec3(u.getY() * v.getZ() - u.getZ() * v.getY(), u.getZ() * v.getX() - u.getX() * v.getZ(), u.getX() * v.getY() - u.getY() * v.getX());
+};
+exports.cross = cross;
 exports["default"] = Vec3;

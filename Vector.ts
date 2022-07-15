@@ -89,22 +89,22 @@ class Vec3 {
     unit_vector = ():Vec3 => {
         return this.div(this.length());
     }
+}
 
-    neg = (v:Vec3):Vec3 => {
-        return new Vec3(-v.getX(), -v.getY(), -v.getZ())
-    }
+export const neg = (v:Vec3):Vec3 => {
+    return new Vec3(-v.getX(), -v.getY(), -v.getZ())
+}
 
-    dot = (u:Vec3, v:Vec3):number => {
-        return u.getX() * v.getX() + u.getY() * v.getY() + u.getZ() * v.getZ();
-    }
+export const dot = (u:Vec3, v:Vec3):number => {
+    return u.getX() * v.getX() + u.getY() * v.getY() + u.getZ() * v.getZ();
+}
 
-    cross = (u:Vec3, v:Vec3):Vec3 => {
-        return new Vec3(
-            u.getY() * v.getZ() - u.getZ() * v.getY(),
-            u.getZ() * v.getX() - u.getX() * v.getZ(),
-            u.getX() * v.getY() - u.getY() * v.getX()
-        )
-    }
+export const cross = (u:Vec3, v:Vec3):Vec3 => {
+    return new Vec3(
+        u.getY() * v.getZ() - u.getZ() * v.getY(),
+        u.getZ() * v.getX() - u.getX() * v.getZ(),
+        u.getX() * v.getY() - u.getY() * v.getX()
+    )
 }
 
 export default Vec3;
