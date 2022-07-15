@@ -1,23 +1,38 @@
 import * as fs from 'fs';
+import Vec3 from './Vector';
+import Ray from "./Ray";
 
 const width:number = 400;
-const ratio:number = 16.0 / 9.0;
-const height:number = (width / ratio)
+const ratio:number = 16.0 / 9.0;;
+const height:number = (width / ratio);
 
 // 랜더링 해주는 함수
 const present = (width:number, ratio:number):number[] => {
-  let output:number[] = [];
-  let aspect_ratio = ratio
-  let image_width = width
-  let image_height = image_width / aspect_ratio
+  const output:number[] = [];
+  const aspect_ratio = ratio;
+  const image_width = width;
+  const image_height = image_width / aspect_ratio;
 
+  const viewportHeight = 2.0;
+  const viportWidth = aspect_ratio * viewportHeight;
+  const focalLength = 1.0;
+
+  const origin = new Vec3(0.0, 0.0, 0.0);
+  const horizontal = new Vec3(viportWidth, 0.0, 0.0);
+  const vertical = new Vec3(0.0, viewportHeight, 0.0);
+  const focal = new Vec3(0.0, 0.0, focalLength);
+
+  const lowerLeftConer:Vec3 = origin.sub(horizontal.div(2.0)).sub(vertical.div(2.0)).sub(focal)
   for(let j=0; j<image_height; j++) {
     for(let i=0; i<image_width; i++) {
-      let u = i / (image_width - 1);
-      let v = j / (image_height -1);
-      output.push(parseInt(String(u * 255.999)));
-      output.push(parseInt(String(v * 255.999)));
-      output.push(parseInt(String(0.25 * 255.999)))
+      const u = i / (image_width - 1);
+      const v = j / (image_height -1);
+      const direction = lowerLeftConer.add(horizontal.mul(u)).add(vertical.mul(v)).sub(origin)
+      const r = new Ray(origin, direction);
+      const rayColor = r.getRayColor();
+      output.push(Math.floor(rayColor.getX() * 255.999));
+      output.push(Math.floor(rayColor.getY() * 255.999));
+      output.push(Math.floor(rayColor.getZ() * 255.999));
     }
   }
   return output;
@@ -50,7 +65,7 @@ const writeRGB = (output:number[]) => {
       rgb += output[i-1] + ' '
     }
   }
-
+  console.log('File Write End')
 }
 const output = present(width, ratio)
 writeRGB(output)
