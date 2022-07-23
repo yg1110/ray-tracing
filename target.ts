@@ -1,16 +1,27 @@
 import * as fs from 'fs';
-import Vec3, {cross, dot} from './Vector';
+import Vec3, {cross, dot, length, unit_vector} from './Vector';
 import Ray from "./Ray";
 
 const width:number = 400;
 const ratio:number = 16.0 / 9.0;;
 const height:number = (width / ratio);
 
-// const hit_sphere = (r:Vec3, sphere:Vec3, offset:number) => {
-//   const e = cross(r, sphere);
-//   const d = dot(r, sphere);
-//   return d
-// }
+const hit_sphere = (r:Ray, sphere:Vec3, radius:number) => {
+  // p : sphere
+  // o : r.getOrigin
+  // d : r.getDirection
+
+  const DO = dot(r.getDirection(), r.getOrigin())
+  const PD = dot(sphere, r.getDirection());
+  const DD = dot(r.getDirection(), r.getDirection());
+  const OP = dot(r.getOrigin(), sphere);
+  const OO = dot(r.getOrigin(), r.getOrigin());
+  const PP = dot(sphere, sphere);
+  const a = DD;
+  const b = 2 * DO - 2 * PD;
+  const c = -2 * OP + OO + PP - radius * radius
+  return b * b - 4.0 * a * c
+}
 
 // 랜더링 해주는 함수
 const present = (width:number, ratio:number):number[] => {
@@ -29,21 +40,24 @@ const present = (width:number, ratio:number):number[] => {
   const focal = new Vec3(0.0, 0.0, focalLength);
 
   const lowerLeftConer:Vec3 = origin.sub(horizontal.div(2.0)).sub(vertical.div(2.0)).sub(focal)
-  const widthOfftset = image_width / 2;
-  const heightOffset = image_height / 2;
-  const radius = 50;
   for(let j=0; j<image_height; j++) {
     for(let i=0; i<image_width; i++) {
       const u = i / (image_width - 1);
       const v = j / (image_height -1);
       const direction = lowerLeftConer.add(horizontal.mul(u)).add(vertical.mul(v)).sub(origin)
       let rayColor = new Vec3(0.0, 0.0, 0.0);
-      // let sphere = new Vec3(0.0, 0.0, -2.0);
-      // let t = hit_sphere(direction, sphere, 1.0);
-      if(radius * radius > (j - heightOffset) * (j - heightOffset) + (i - widthOfftset) * (i - widthOfftset)) {
-        rayColor = new Vec3(1, 0.0, 0.1);
+      let sphere = new Vec3(0.0, 0.0, -2.0);
+      const r = new Ray(origin, direction);
+      let t = hit_sphere(r, sphere, 1.0);
+      if(t >= 0) {
+        const P = r.at(t);
+        const V = unit_vector(P).sub(sphere);
+        rayColor = new Vec3(
+            (V.getX() + 1.0)  * 0.5,
+            (V.getY() + 1.0)  * 0.5,
+            (V.getZ() + 1.0)  * 0.5
+        );
       } else {
-        const r = new Ray(origin, direction);
         rayColor = r.getRayColor();
       }
       output.push(Math.floor(rayColor.getX() * 255.999));

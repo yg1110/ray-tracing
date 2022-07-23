@@ -19,5 +19,8 @@
   "homepage": "https://github.com/yg1110/ray-tracing#readme",
   "devDependencies": {
     "@types/node": "^18.0.0"
+  },
+  "dependencies": {
+    "fs": "0.0.1-security"
   }
 }

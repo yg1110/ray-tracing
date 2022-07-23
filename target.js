@@ -7,11 +7,20 @@ var width = 400;
 var ratio = 16.0 / 9.0;
 ;
 var height = (width / ratio);
-var hit_sphere = function (r, sphere, offset) {
-    var e = (0, Vector_1.cross)(r, sphere);
-    var d = (0, Vector_1.dot)(r, sphere);
-    console.log(d);
-    return d;
+var hit_sphere = function (r, sphere, radius) {
+    // p : sphere
+    // o : r.getOrigin
+    // d : r.getDirection
+    var DO = (0, Vector_1.dot)(r.getDirection(), r.getOrigin());
+    var PD = (0, Vector_1.dot)(sphere, r.getDirection());
+    var DD = (0, Vector_1.dot)(r.getDirection(), r.getDirection());
+    var OP = (0, Vector_1.dot)(r.getOrigin(), sphere);
+    var OO = (0, Vector_1.dot)(r.getOrigin(), r.getOrigin());
+    var PP = (0, Vector_1.dot)(sphere, sphere);
+    var a = DD;
+    var b = 2 * DO - 2 * PD;
+    var c = -2 * OP + OO + PP - radius * radius;
+    return b * b - 4.0 * a * c;
 };
 // 랜더링 해주는 함수
 var present = function (width, ratio) {
@@ -27,9 +36,6 @@ var present = function (width, ratio) {
     var vertical = new Vector_1["default"](0.0, viewportHeight, 0.0);
     var focal = new Vector_1["default"](0.0, 0.0, focalLength);
     var lowerLeftConer = origin.sub(horizontal.div(2.0)).sub(vertical.div(2.0)).sub(focal);
-    var radius1 = 112.5;
-    var radius2 = 200;
-    var offset = 2000;
     for (var j = 0; j < image_height; j++) {
         for (var i = 0; i < image_width; i++) {
             var u = i / (image_width - 1);
@@ -37,13 +43,14 @@ var present = function (width, ratio) {
             var direction = lowerLeftConer.add(horizontal.mul(u)).add(vertical.mul(v)).sub(origin);
             var rayColor = new Vector_1["default"](0.0, 0.0, 0.0);
             var sphere = new Vector_1["default"](0.0, 0.0, -2.0);
-            // let t = hit_sphere(direction, sphere, 1.0);
-            // radius*radius > (j - radius) * (j - radius) + (i - radius) * (i - radius)
-            if (50 * 50 > (j - radius1) * (j - radius1) + (i - radius2) * (i - radius2)) {
-                rayColor = new Vector_1["default"](1, 0.0, 0.1);
+            var r = new Ray_1["default"](origin, direction);
+            var t = hit_sphere(r, sphere, 1.0);
+            if (t >= 0) {
+                var P = r.at(t);
+                var V = (0, Vector_1.unit_vector)(P).sub(sphere);
+                rayColor = new Vector_1["default"]((V.getX() + 1.0) * 0.5, (V.getY() + 1.0) * 0.5, (V.getZ() + 1.0) * 0.5);
             }
             else {
-                var r = new Ray_1["default"](origin, direction);
                 rayColor = r.getRayColor();
             }
             output.push(Math.floor(rayColor.getX() * 255.999));

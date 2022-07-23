@@ -1,6 +1,6 @@
 "use strict";
 exports.__esModule = true;
-exports.cross = exports.dot = exports.neg = void 0;
+exports.cross = exports.dot = exports.neg = exports.unit_vector = exports.length = exports.length_squared = void 0;
 var Vec3 = /** @class */ (function () {
     function Vec3(x, y, z) {
         var _this = this;
@@ -66,21 +66,24 @@ var Vec3 = /** @class */ (function () {
                 return new Vec3(_this.getX() / rhs.getX(), _this.getY() / rhs.getY(), _this.getZ() / rhs.getZ());
             }
         };
-        this.length_squared = function () {
-            return _this.x * _this.x + _this.y * _this.y + _this.z * _this.z;
-        };
-        this.length = function () {
-            return Math.sqrt(_this.length_squared());
-        };
-        this.unit_vector = function () {
-            return _this.div(_this.length());
-        };
         this.x = x;
         this.y = y;
         this.z = z;
     }
     return Vec3;
 }());
+var length_squared = function (v) {
+    return v.getX() * v.getX() + v.getY() * v.getY() + v.getZ() * v.getZ();
+};
+exports.length_squared = length_squared;
+var length = function (v) {
+    return Math.sqrt((0, exports.length_squared)(v));
+};
+exports.length = length;
+var unit_vector = function (v) {
+    return v.div((0, exports.length)(v));
+};
+exports.unit_vector = unit_vector;
 var neg = function (v) {
     return new Vec3(-v.getX(), -v.getY(), -v.getZ());
 };

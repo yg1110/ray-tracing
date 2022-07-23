@@ -77,18 +77,19 @@ class Vec3 {
             return new Vec3(this.getX() / rhs.getX(), this.getY() / rhs.getY(), this.getZ() / rhs.getZ());
         }
     }
+}
 
-    length_squared = ():number => {
-        return this.x * this.x + this.y * this.y + this.z * this.z
-    }
 
-    length = ():number => {
-        return Math.sqrt(this.length_squared());
-    }
+export const length_squared = (v:Vec3):number => {
+    return v.getX() * v.getX() + v.getY() * v.getY() + v.getZ() * v.getZ();
+}
 
-    unit_vector = ():Vec3 => {
-        return this.div(this.length());
-    }
+export const length = (v:Vec3):number => {
+    return Math.sqrt(length_squared(v));
+}
+
+export const unit_vector = (v:Vec3):Vec3 => {
+    return  v.div(length(v));
 }
 
 export const neg = (v:Vec3):Vec3 => {

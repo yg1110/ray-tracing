@@ -18,7 +18,7 @@ var Ray = /** @class */ (function () {
             return _this.direction.mul(t).add(_this.origin);
         };
         this.getRayColor = function () {
-            var unit_direction = _this.getDirection().unit_vector();
+            var unit_direction = (0, Vector_1.unit_vector)(_this.getDirection());
             var t = 0.5 * (unit_direction.getY() + 1.0);
             var color = new Vector_1["default"](1.0, 1.0, 1.0);
             return color.mul(1.0 - t).add(BLUESKY.mul(t));
