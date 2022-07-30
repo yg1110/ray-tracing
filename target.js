@@ -3,27 +3,14 @@ exports.__esModule = true;
 var fs = require("fs");
 var Vector_1 = require("./Vector");
 var Ray_1 = require("./Ray");
+var HittableList_1 = require("./HittableList");
+var Sphere_1 = require("./Sphere");
 var width = 400;
 var ratio = 16.0 / 9.0;
 ;
 var height = (width / ratio);
-var hit_sphere = function (r, sphere, radius) {
-    // p : sphere
-    // o : r.getOrigin
-    // d : r.getDirection
-    var DO = (0, Vector_1.dot)(r.getDirection(), r.getOrigin());
-    var PD = (0, Vector_1.dot)(sphere, r.getDirection());
-    var DD = (0, Vector_1.dot)(r.getDirection(), r.getDirection());
-    var OP = (0, Vector_1.dot)(r.getOrigin(), sphere);
-    var OO = (0, Vector_1.dot)(r.getOrigin(), r.getOrigin());
-    var PP = (0, Vector_1.dot)(sphere, sphere);
-    var a = DD;
-    var b = 2 * DO - 2 * PD;
-    var c = -2 * OP + OO + PP - radius * radius;
-    return b * b - 4.0 * a * c;
-};
 // 랜더링 해주는 함수
-var present = function (width, ratio) {
+var present = function (width, ratio, world) {
     var output = [];
     var aspect_ratio = ratio;
     var image_width = width;
@@ -41,18 +28,8 @@ var present = function (width, ratio) {
             var u = i / (image_width - 1);
             var v = j / (image_height - 1);
             var direction = lowerLeftConer.add(horizontal.mul(u)).add(vertical.mul(v)).sub(origin);
-            var rayColor = new Vector_1["default"](0.0, 0.0, 0.0);
-            var sphere = new Vector_1["default"](0.0, 0.0, -2.0);
             var r = new Ray_1["default"](origin, direction);
-            var t = hit_sphere(r, sphere, 1.0);
-            if (t >= 0) {
-                var P = r.at(t);
-                var V = (0, Vector_1.unit_vector)(P).sub(sphere);
-                rayColor = new Vector_1["default"]((V.getX() + 1.0) * 0.5, (V.getY() + 1.0) * 0.5, (V.getZ() + 1.0) * 0.5);
-            }
-            else {
-                rayColor = r.getRayColor();
-            }
+            var rayColor = (0, Ray_1.getRayColor)(r, world);
             output.push(Math.floor(rayColor.getX() * 255.999));
             output.push(Math.floor(rayColor.getY() * 255.999));
             output.push(Math.floor(rayColor.getZ() * 255.999));
@@ -85,5 +62,11 @@ var writeRGB = function (output) {
     }
     console.log('File Write End');
 };
-var output = present(width, ratio);
-writeRGB(output);
+var main = function () {
+    var world = new HittableList_1["default"]();
+    world.add(new Sphere_1["default"](new Vector_1["default"](0.0, -100.5, -1.0)));
+    world.add(new Sphere_1["default"](new Vector_1["default"](0.0, 0.0, -1.0)));
+    var output = present(width, ratio, world);
+    writeRGB(output);
+};
+main();

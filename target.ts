@@ -1,30 +1,15 @@
 import * as fs from 'fs';
 import Vec3, {cross, dot, length, unit_vector} from './Vector';
-import Ray from "./Ray";
+import Ray, {getRayColor} from "./Ray";
+import HitableList from "./HittableList";
+import Sphere from "./Sphere";
 
 const width:number = 400;
 const ratio:number = 16.0 / 9.0;;
 const height:number = (width / ratio);
 
-const hit_sphere = (r:Ray, sphere:Vec3, radius:number) => {
-  // p : sphere
-  // o : r.getOrigin
-  // d : r.getDirection
-
-  const DO = dot(r.getDirection(), r.getOrigin())
-  const PD = dot(sphere, r.getDirection());
-  const DD = dot(r.getDirection(), r.getDirection());
-  const OP = dot(r.getOrigin(), sphere);
-  const OO = dot(r.getOrigin(), r.getOrigin());
-  const PP = dot(sphere, sphere);
-  const a = DD;
-  const b = 2 * DO - 2 * PD;
-  const c = -2 * OP + OO + PP - radius * radius
-  return b * b - 4.0 * a * c
-}
-
 // 랜더링 해주는 함수
-const present = (width:number, ratio:number):number[] => {
+const present = (width:number, ratio:number, world:HitableList):number[] => {
   const output:number[] = [];
   const aspect_ratio = ratio;
   const image_width = width;
@@ -45,21 +30,8 @@ const present = (width:number, ratio:number):number[] => {
       const u = i / (image_width - 1);
       const v = j / (image_height -1);
       const direction = lowerLeftConer.add(horizontal.mul(u)).add(vertical.mul(v)).sub(origin)
-      let rayColor = new Vec3(0.0, 0.0, 0.0);
-      let sphere = new Vec3(0.0, 0.0, -2.0);
       const r = new Ray(origin, direction);
-      let t = hit_sphere(r, sphere, 1.0);
-      if(t >= 0) {
-        const P = r.at(t);
-        const V = unit_vector(P).sub(sphere);
-        rayColor = new Vec3(
-            (V.getX() + 1.0)  * 0.5,
-            (V.getY() + 1.0)  * 0.5,
-            (V.getZ() + 1.0)  * 0.5
-        );
-      } else {
-        rayColor = r.getRayColor();
-      }
+      const rayColor = getRayColor(r, world);
       output.push(Math.floor(rayColor.getX() * 255.999));
       output.push(Math.floor(rayColor.getY() * 255.999));
       output.push(Math.floor(rayColor.getZ() * 255.999));
@@ -97,5 +69,14 @@ const writeRGB = (output:number[]) => {
   }
   console.log('File Write End')
 }
-const output = present(width, ratio)
-writeRGB(output)
+
+
+const main = () => {
+  const world = new HitableList();
+  world.add(new Sphere(new Vec3(0.0, 0.0, -1.0)))
+  world.add(new Sphere(new Vec3(0.0, -100.5, -1.0)));
+  const output = present(width, ratio, world)
+  writeRGB(output)
+}
+
+main();
